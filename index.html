@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Search App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b0f1d;
+            color: white;
+            text-align: center;
+        }
+        input { padding: 10px; width: 250px; }
+        button { padding: 10px; cursor: pointer; }
+        .movie { margin: 15px; display: inline-block; text-align: center; }
+        img { width: 150px; height: auto; }
+    </style>
+</head>
+<body>
+
+<h1>🎬 Movie Search</h1>
+
+<input type="text" id="movieName" placeholder="Enter movie name">
+<button onclick="searchMovie()">Search</button>
+
+<div id="result"></div>
+
+<script>
+function searchMovie() {
+    const movie = document.getElementById("movieName").value;
+
+    if (!movie) {
+        alert("Please enter a movie name");
+        return;
+    }
+
+    fetch("movie_api.php?search=" + movie)
+        .then(res => res.json())
+        .then(data => {
+            let output = "";
+
+            if (data.Search) {
+                data.Search.forEach(movie => {
+                    output += `
+                        <div class="movie">
+                            <h3>${movie.Title} (${movie.Year})</h3>
+                            <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/150'}">
+                        </div>
+                    `;
+                });
+            } else {
+                output = "<p>No movie found</p>";
+            }
+
+            document.getElementById("result").innerHTML = output;
+        })
+        .catch(err => {
+            document.getElementById("result").innerHTML = `<p>Error: ${err}</p>`;
+        });
+}
+</script>
+
+</body>
+</html>
